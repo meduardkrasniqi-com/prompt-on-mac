@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Prompt on Mac</title>
-<meta name="description" content="A tiny Mac app that hangs your script from the notch and scrolls it at your pace.">
+<meta name="description" content="A simple teleprompter for your Mac. Your script scrolls right under the camera, so you can read it on calls and recordings while looking into the lens.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -150,6 +150,21 @@ a { color: inherit; }
 
 .btn-small { padding: 9px 16px; font-size: 0.875rem; }
 
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-link {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.nav-link:hover { color: var(--ink); }
+
 .hero {
   display: grid;
   justify-items: center;
@@ -171,7 +186,7 @@ a { color: inherit; }
 
 .hero p {
   margin: 0;
-  max-width: 34ch;
+  max-width: 40ch;
   color: var(--muted);
   font-size: var(--step-1);
   text-wrap: balance;
@@ -503,13 +518,16 @@ footer {
 
 <header class="wrap nav">
   <a class="brand" href="#top" aria-label="Prompt on Mac home"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="1.25" y="1.25" width="61.5" height="61.5" rx="13.15" fill="#fff" stroke="#121212" stroke-width="2.5"/><path d="M16 0h32v14a10 10 0 0 1-10 10H26a10 10 0 0 1-10-10z" fill="#121212"/></svg>Prompt on Mac</a>
-  <a class="btn btn-small" href="PromptOnMac-0.1.0.dmg">Download</a>
+  <div class="nav-links">
+    <a class="nav-link" href="https://github.com/meduardkrasniqi-com/prompt-on-mac">GitHub</a>
+    <a class="btn btn-small" href="PromptOnMac-0.1.0.dmg">Download</a>
+  </div>
 </header>
 
 <main id="top">
   <section class="wrap hero">
-    <h1>Your script, right under the camera.</h1>
-    <p>A tiny Mac app that hangs your script from the notch and scrolls it at your pace.</p>
+    <h1>A simple teleprompter for your Mac.</h1>
+    <p>Your script scrolls right under the camera, so you can read it on calls and recordings while looking into the lens.</p>
     <a class="btn" href="PromptOnMac-0.1.0.dmg">
       <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v8.5M4.5 7 8 10.5 11.5 7M3 13.5h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Download for Mac
@@ -589,7 +607,7 @@ footer {
 </main>
 
 <footer class="wrap">
-  <span>Prompt on Mac 0.1.0</span>
+  <span>Prompt on Mac 0.1.0 · <a href="https://github.com/meduardkrasniqi-com/prompt-on-mac">Source on GitHub</a></span>
   <span>macOS 14 or later · Apple silicon and Intel</span>
 </footer>
 
