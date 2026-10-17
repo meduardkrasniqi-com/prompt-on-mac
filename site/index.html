@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prompt on Mac</title>
+<meta name="description" content="A tiny Mac app that hangs your script from the notch and scrolls it at your pace.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #eceef1;
+  --surface: #f8f9fb;
+  --ink: #15171c;
+  --muted: #5b616c;
+  --line: #d4d8de;
+  --led: #23b04f;
+  --btn: #15171c;
+  --btn-ink: #f8f9fb;
+  --bezel: #0c0d10;
+  --wall-a: #b9c8cc;
+  --wall-b: #e6d8c3;
+  --menubar: rgba(255, 255, 255, 0.42);
+  --menubar-ink: rgba(20, 22, 28, 0.7);
+  --prompter-bg: #000000;
+  --prompter-ink: #ffffff;
+  --font-display: "Geist", -apple-system, "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+  --font-body: "Geist", -apple-system, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --step-0: 1rem;
+  --step-1: 1.1875rem;
+  --step-2: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
+  --step-4: clamp(2.5rem, 1.4rem + 4.6vw, 4.75rem);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111317;
+    --surface: #1a1d22;
+    --ink: #eef0f3;
+    --muted: #99a0ab;
+    --line: #2a2e35;
+    --led: #3bd16c;
+    --btn: #eef0f3;
+    --btn-ink: #111317;
+    --bezel: #050506;
+    --wall-a: #26353b;
+    --wall-b: #4a3f33;
+    --menubar: rgba(10, 12, 14, 0.38);
+    --menubar-ink: rgba(240, 242, 245, 0.75);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111317;
+  --surface: #1a1d22;
+  --ink: #eef0f3;
+  --muted: #99a0ab;
+  --line: #2a2e35;
+  --led: #3bd16c;
+  --btn: #eef0f3;
+  --btn-ink: #111317;
+  --bezel: #050506;
+  --wall-a: #26353b;
+  --wall-b: #4a3f33;
+  --menubar: rgba(10, 12, 14, 0.38);
+  --menubar-ink: rgba(240, 242, 245, 0.75);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--led);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 22px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--step-1);
+  letter-spacing: -0.025em;
+  text-decoration: none;
+}
+
+.mark {
+  width: 30px;
+  height: 30px;
+  flex: none;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--btn);
+  color: var(--btn-ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -10px color-mix(in srgb, var(--ink) 60%, transparent);
+}
+
+.btn svg { width: 16px; height: 16px; flex: none; }
+
+.btn-small { padding: 9px 16px; font-size: 0.875rem; }
+
+.hero {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 28px;
+  padding-block: clamp(32px, 6vw, 72px) 0;
+}
+
+.hero h1 {
+  margin: 0;
+  max-width: 14ch;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--step-4);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.hero p {
+  margin: 0;
+  max-width: 34ch;
+  color: var(--muted);
+  font-size: var(--step-1);
+  text-wrap: balance;
+}
+
+.stage {
+  padding-block: clamp(40px, 7vw, 80px) 0;
+}
+
+.device {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.lid {
+  padding: clamp(6px, 1.1vw, 12px);
+  background: var(--bezel);
+  border-radius: clamp(14px, 2.4vw, 26px) clamp(14px, 2.4vw, 26px) 6px 6px;
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.45);
+}
+
+.screen {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  max-width: 100%;
+  border-radius: clamp(8px, 1.4vw, 14px) clamp(8px, 1.4vw, 14px) 2px 2px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 15% 110%, var(--wall-b), transparent 60%),
+    radial-gradient(90% 80% at 90% 0%, var(--wall-a), transparent 70%),
+    linear-gradient(160deg, var(--wall-a), var(--wall-b));
+  --bar: clamp(14px, 2.6vw, 26px);
+}
+
+.menubar {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--bar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3%;
+  background: var(--menubar);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--menubar-ink);
+  font-size: clamp(6px, 1.1vw, 12px);
+  font-weight: 500;
+}
+
+.menubar span { display: flex; gap: 1.6em; }
+
+.notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: 17%;
+  height: calc(var(--bar) + 2px);
+  background: var(--bezel);
+  border-radius: 0 0 clamp(5px, 1vw, 10px) clamp(5px, 1vw, 10px);
+  z-index: 3;
+  display: grid;
+  place-items: center;
+}
+
+.cam {
+  width: clamp(3px, 0.6vw, 6px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #1d2430;
+  box-shadow: inset 0 0 0 1px #2b3442;
+}
+
+.cam-led {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + clamp(5px, 1vw, 10px));
+  width: clamp(2px, 0.35vw, 4px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--led);
+  translate: 0 -50%;
+  box-shadow: 0 0 6px var(--led);
+}
+
+.prompter {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: 56%;
+  height: 34%;
+  background: var(--prompter-bg);
+  border-radius: 0 0 clamp(10px, 2vw, 20px) clamp(10px, 2vw, 20px);
+  z-index: 2;
+  overflow: hidden;
+  cursor: default;
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.6);
+}
+
+.prompter-view {
+  position: absolute;
+  inset: calc(var(--bar) + 4px) 0 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 78%, transparent 100%);
+}
+
+.prompter-text {
+  margin: 0;
+  padding: 6% 6% 0;
+  color: var(--prompter-ink);
+  font-family: var(--font-mono);
+  font-size: clamp(7.5px, 1.55vw, 16px);
+  line-height: 1.6;
+  will-change: transform;
+}
+
+.prompter-text p { margin: 0 0 1.1em; }
+
+.cue {
+  color: color-mix(in srgb, var(--prompter-ink) 42%, transparent);
+  font-style: italic;
+}
+
+.base {
+  height: clamp(8px, 1.4vw, 16px);
+  margin: 0 -2.5%;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--muted) 55%, var(--bg)), color-mix(in srgb, var(--muted) 85%, var(--bg)));
+  border-radius: 2px 2px 18px 18px / 2px 2px 10px 10px;
+  position: relative;
+}
+
+.base::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: 14%;
+  height: 40%;
+  background: color-mix(in srgb, var(--bezel) 30%, transparent);
+  border-radius: 0 0 8px 8px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: clamp(72px, 10vw, 128px);
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.feature {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding: clamp(24px, 3.4vw, 40px);
+  background: var(--surface);
+}
+
+.feature h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--step-2);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.feature p {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--muted);
+}
+
+.sample {
+  margin-top: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--prompter-bg);
+  color: var(--prompter-ink);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.keys {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.keys li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9375rem;
+}
+
+.keys span:first-child { color: var(--muted); }
+
+kbd {
+  display: inline-block;
+  min-width: 1.9em;
+  padding: 2px 7px;
+  margin-left: 3px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.speed {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+}
+
+.speed strong {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.speed span { color: var(--muted); font-size: 0.875rem; }
+
+.install {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: start;
+  padding-block: clamp(72px, 10vw, 128px);
+}
+
+.install h2 {
+  margin: 0 0 20px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 1.3rem + 2.6vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+
+.steps {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 12px;
+  padding-block: 18px;
+  border-top: 1px solid var(--line);
+  counter-increment: step;
+}
+
+.steps li:last-child { border-bottom: 1px solid var(--line); }
+
+.steps li::before {
+  content: counter(step);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--muted);
+  padding-top: 2px;
+}
+
+.steps strong { display: block; font-weight: 600; }
+
+.steps span { color: var(--muted); }
+
+.steps code {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  word-break: break-word;
+}
+
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-block: 28px 40px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 720px) {
+  .features { grid-template-columns: minmax(0, 1fr); }
+  .install { grid-template-columns: minmax(0, 1fr); }
+  .menubar span:first-child span:nth-child(n+4) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="wrap nav">
+  <a class="brand" href="#top" aria-label="Prompt on Mac home"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="1.25" y="1.25" width="61.5" height="61.5" rx="13.15" fill="#fff" stroke="#121212" stroke-width="2.5"/><path d="M16 0h32v14a10 10 0 0 1-10 10H26a10 10 0 0 1-10-10z" fill="#121212"/></svg>Prompt on Mac</a>
+  <a class="btn btn-small" href="PromptOnMac-0.1.0.dmg">Download</a>
+</header>
+
+<main id="top">
+  <section class="wrap hero">
+    <h1>Your script, right under the camera.</h1>
+    <p>A tiny Mac app that hangs your script from the notch and scrolls it at your pace.</p>
+    <a class="btn" href="PromptOnMac-0.1.0.dmg">
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v8.5M4.5 7 8 10.5 11.5 7M3 13.5h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Download for Mac
+    </a>
+  </section>
+
+  <section class="wrap stage" aria-label="Preview">
+    <div class="device">
+      <div class="lid">
+        <div class="screen">
+          <div class="menubar" aria-hidden="true">
+            <span><span>Prompt on Mac</span><span>File</span><span>Edit</span><span>View</span><span>Window</span></span>
+            <span><span>Fri 9:41</span></span>
+          </div>
+          <div class="notch" aria-hidden="true"><span class="cam"></span><span class="cam-led"></span></div>
+          <div class="prompter" id="prompter">
+            <div class="prompter-view">
+              <div class="prompter-text" id="prompter-text">
+                <p><span class="cue">[Pause]</span></p>
+                <p>Hi everyone, thanks for joining. <span class="cue">[Smile]</span> I want to walk you through what we shipped this week.</p>
+                <p>First, the new onboarding flow. <span class="cue">[Short pause]</span> Sign-ups that finish setup went from about half to nearly three in four.</p>
+                <p>Second, we cut the export time in half. <span class="cue">[Breathe]</span> That one came straight from your feedback.</p>
+                <p>Questions are open at the end, so keep them coming. <span class="cue">[Look at the lens]</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="base" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="features">
+      <article class="feature">
+        <h2>Sits under the lens</h2>
+        <p>The prompter hangs from the top edge of your screen, right below the camera. Your eyes stay where people expect them.</p>
+      </article>
+      <article class="feature">
+        <h2>Cues you won't read aloud</h2>
+        <p>Put directions in square brackets and they show up dimmed, so you see them without saying them.</p>
+        <div class="sample">Let's get started. <span class="cue">[Pause]</span> Here is the plan.</div>
+      </article>
+      <article class="feature">
+        <h2>Scrolls at your pace</h2>
+        <p>Set the speed, nudge it while you talk, or scroll with the trackpad. Move the pointer over the text to hold it in place.</p>
+        <div class="speed"><strong id="speed">30</strong><span>points per second</span></div>
+      </article>
+      <article class="feature">
+        <h2>Shortcuts from any app</h2>
+        <p>Control it while another app is in front.</p>
+        <ul class="keys">
+          <li><span>Play or pause</span><span><kbd>⌃</kbd><kbd>⌥</kbd><kbd>Space</kbd></span></li>
+          <li><span>Show or hide</span><span><kbd>⌃</kbd><kbd>⌥</kbd><kbd>H</kbd></span></li>
+          <li><span>Back to start</span><span><kbd>⌃</kbd><kbd>⌥</kbd><kbd>R</kbd></span></li>
+          <li><span>Faster or slower</span><span><kbd>⌃</kbd><kbd>⌥</kbd><kbd>↑</kbd><kbd>↓</kbd></span></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="wrap install" id="install">
+    <div>
+      <h2>Install</h2>
+      <a class="btn" href="PromptOnMac-0.1.0.dmg">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v8.5M4.5 7 8 10.5 11.5 7M3 13.5h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download .dmg
+      </a>
+    </div>
+    <ol class="steps">
+      <li><div><strong>Drag it to Applications</strong><span>Open the downloaded file and drag Prompt on Mac onto the Applications folder.</span></div></li>
+      <li><div><strong>Open it once</strong><span>macOS will say it can't verify the developer. Click Done.</span></div></li>
+      <li><div><strong>Allow it</strong><span>Go to System Settings, then Privacy &amp; Security, scroll down and click Open Anyway.</span></div></li>
+      <li><div><strong>If macOS says the app is damaged</strong><span>Run <code>xattr -cr "/Applications/Prompt on Mac.app"</code> in Terminal and open it again.</span></div></li>
+    </ol>
+  </section>
+</main>
+
+<footer class="wrap">
+  <span>Prompt on Mac 0.1.0</span>
+  <span>macOS 14 or later · Apple silicon and Intel</span>
+</footer>
+
+<script>
+(function () {
+  var prompter = document.getElementById("prompter");
+  var text = document.getElementById("prompter-text");
+  var speedLabel = document.getElementById("speed");
+  if (!prompter || !text) return;
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var offset = 0;
+  var last = 0;
+  var hovering = false;
+  var speed = 30;
+
+  prompter.addEventListener("mouseenter", function () { hovering = true; });
+  prompter.addEventListener("mouseleave", function () { hovering = false; });
+
+  function scale() {
+    return prompter.clientWidth / 540;
+  }
+
+  function frame(now) {
+    var dt = last ? Math.min((now - last) / 1000, 0.1) : 0;
+    last = now;
+    if (!hovering && !reduce.matches) {
+      offset += speed * scale() * dt;
+      if (offset > text.scrollHeight) offset = -prompter.clientHeight * 0.4;
+      text.style.transform = "translateY(" + (-offset) + "px)";
+    }
+    requestAnimationFrame(frame);
+  }
+
+  if (speedLabel) speedLabel.textContent = String(speed);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
